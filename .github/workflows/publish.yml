@@ -1,0 +1,40 @@
+name: Pubblica notizie aviazione
+
+on:
+  schedule:
+    # Ogni 3 ore (orario UTC). L'Italia e' UTC+1 in inverno, UTC+2 in estate.
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}   # permette anche l'avvio manuale da GitHub
+
+# Serve il permesso di scrittura per poter ricommittare posted_ids.json
+permissions:
+  contents: write
+
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Esegui il bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: python bot.py
+
+      - name: Salva lo stato (posted_ids.json) nel repo
+        run: |
+          git config user.name "aviazione-bot"
+          git config user.email "actions@github.com"
+          git add posted_ids.json
+          git diff --staged --quiet || git commit -m "Aggiorna notizie pubblicate [skip ci]"
+          git push
