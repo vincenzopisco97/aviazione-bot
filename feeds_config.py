@@ -19,6 +19,14 @@ FEEDS = [
     {"url": "https://theaviationist.com/feed", "lang": "en", "categoria": "militare"},
     {"url": "https://www.avionews.it/items.rss", "lang": "en", "categoria": "misto"},
     {"url": "https://aviationweek.com/awn-rss/feed", "lang": "en", "categoria": "misto"},
+    {"url": "https://simpleflying.com/feed", "lang": "en", "categoria": "civile"},
+    {"url": "https://airlinegeeks.com/feed", "lang": "en", "categoria": "civile"},
+    {"url": "https://www.navalnews.com/feed", "lang": "en", "categoria": "militare"},
+    {"url": "https://www.twz.com/feed", "lang": "en", "categoria": "militare"},
+    {"url": "https://www.defence-blog.com/feed", "lang": "en", "categoria": "militare"},
+    {"url": "https://www.air-journal.fr/feed", "lang": "fr", "categoria": "civile"},
+    {"url": "https://www.aviationnews.eu/feed", "lang": "en", "categoria": "misto"},
+    {"url": "https://leehamnews.com/feed", "lang": "en", "categoria": "civile"},
 
     # --- Da verificare con check_feeds.py prima del primo run ---
     {"url": "https://meta-defense.fr/feed", "lang": "fr", "categoria": "militare"},
@@ -26,6 +34,15 @@ FEEDS = [
     {"url": "https://aresdifesa.it/feed", "lang": "it", "categoria": "militare"},
     {"url": "https://www.aviation24.be/feed", "lang": "en", "categoria": "civile"},
     {"url": "https://www.flightglobal.com/rss/news", "lang": "en", "categoria": "civile"},
+    {"url": "https://italiavola.com/feed", "lang": "it", "categoria": "civile"},
+    {"url": "https://www.aviation-report.com/feed", "lang": "it", "categoria": "misto"},
+    {"url": "https://aeronews.it/feed", "lang": "it", "categoria": "civile"},
+    {"url": "https://www.ainonline.com/feed", "lang": "en", "categoria": "misto"},
+    {"url": "https://breakingdefense.com/feed/", "lang": "en", "categoria": "militare"},
+    {"url": "https://www.aerotelegraph.com/feed", "lang": "de", "categoria": "civile"},
+
+    # Esclusi di proposito: ch-aviation (RSS a pagamento), Key.Aero e CAPA
+    # (analisi principalmente dietro paywall) - non compatibili con "sempre gratis"
 
     # Aggiungi qui altre fonti man mano che le trovi
     # {"url": "https://esempio.it/feed", "lang": "it", "categoria": "civile"},
