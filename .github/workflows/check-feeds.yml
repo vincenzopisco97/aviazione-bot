@@ -1,0 +1,22 @@
+name: Verifica feed RSS
+
+on:
+  workflow_dispatch: {}   # si lancia solo manualmente, dalla tab Actions
+
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installa dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Controlla i feed
+        run: python check_feeds.py
