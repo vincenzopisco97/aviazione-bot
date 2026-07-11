@@ -15,10 +15,9 @@ Alcuni feed sono marcati "DA VERIFICARE": prima del primo utilizzo lancia
 """
 
 FEEDS = [
-    # --- Confermati funzionanti ---
+    # --- Tutte confermate funzionanti via check_feeds.py (16/22) ---
     {"url": "https://theaviationist.com/feed", "lang": "en", "categoria": "militare"},
     {"url": "https://www.avionews.it/items.rss", "lang": "en", "categoria": "misto"},
-    {"url": "https://aviationweek.com/awn-rss/feed", "lang": "en", "categoria": "misto"},
     {"url": "https://simpleflying.com/feed", "lang": "en", "categoria": "civile"},
     {"url": "https://airlinegeeks.com/feed", "lang": "en", "categoria": "civile"},
     {"url": "https://www.navalnews.com/feed", "lang": "en", "categoria": "militare"},
@@ -27,26 +26,26 @@ FEEDS = [
     {"url": "https://www.air-journal.fr/feed", "lang": "fr", "categoria": "civile"},
     {"url": "https://www.aviationnews.eu/feed", "lang": "en", "categoria": "misto"},
     {"url": "https://leehamnews.com/feed", "lang": "en", "categoria": "civile"},
-
-    # --- Da verificare con check_feeds.py prima del primo run ---
-    {"url": "https://meta-defense.fr/feed", "lang": "fr", "categoria": "militare"},
-    {"url": "https://www.rid.it/feed", "lang": "it", "categoria": "militare"},
     {"url": "https://aresdifesa.it/feed", "lang": "it", "categoria": "militare"},
     {"url": "https://www.aviation24.be/feed", "lang": "en", "categoria": "civile"},
-    {"url": "https://www.flightglobal.com/rss/news", "lang": "en", "categoria": "civile"},
     {"url": "https://italiavola.com/feed", "lang": "it", "categoria": "civile"},
     {"url": "https://www.aviation-report.com/feed", "lang": "it", "categoria": "misto"},
-    {"url": "https://aeronews.it/feed", "lang": "it", "categoria": "civile"},
-    {"url": "https://www.ainonline.com/feed", "lang": "en", "categoria": "misto"},
     {"url": "https://breakingdefense.com/feed/", "lang": "en", "categoria": "militare"},
     {"url": "https://www.aerotelegraph.com/feed", "lang": "de", "categoria": "civile"},
 
-    # Esclusi di proposito: ch-aviation (RSS a pagamento), Key.Aero e CAPA
-    # (analisi principalmente dietro paywall) - non compatibili con "sempre gratis"
-
-    # Aggiungi qui altre fonti man mano che le trovi
-    # {"url": "https://esempio.it/feed", "lang": "it", "categoria": "civile"},
+    # Aggiungi qui altre fonti man mano che le trovi, poi ri-lancia il
+    # workflow "Verifica feed RSS" per controllarle prima di fidartene
 ]
+
+# --- Rimosse il 11/07/2026, risultate ROTTE al test (check_feeds.py) ---
+# Potrebbero essere state solo un problema temporaneo del sito: se vuoi
+# ritentarle in futuro, rimettile sopra e ri-verifica.
+# https://aviationweek.com/awn-rss/feed
+# https://meta-defense.fr/feed
+# https://www.rid.it/feed
+# https://www.flightglobal.com/rss/news
+# https://aeronews.it/feed
+# https://www.ainonline.com/feed
 
 # ---------------------------------------------------------------------------
 # FILTRO "RILEVANZA EUROPA"
