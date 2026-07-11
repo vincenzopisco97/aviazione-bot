@@ -1,4 +1,5 @@
 name: Pubblica notizie aviazione
+# ping per forzare la registrazione dello schedule su GitHub
 
 on:
   schedule:
