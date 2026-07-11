@@ -98,20 +98,24 @@ def salva_id_pubblicati(id_set: set) -> None:
         json.dump(lista, f, ensure_ascii=False, indent=2)
 
 
-def carica_indice_rotazione() -> int:
-    """Indice della fonte da cui iniziare la lettura in questo run. Ruotando
-    il punto di partenza ad ogni esecuzione, nessuna fonte resta sempre
-    "prima della fila" (altrimenti, con MAX_POST_PER_RUN basso, la stessa
-    fonte vincerebbe quasi sempre)."""
+def carica_stato_rotazione() -> dict:
+    """Stato di rotazione: indice separato per il pool 'militare' e per il
+    pool 'civile' (cosi' avanzano indipendentemente), piu' quale categoria
+    tocca al prossimo run. Alternando la categoria ad ogni run, su un numero
+    pari di run al giorno si ottiene un 50/50 civile/militare.
+    """
+    predefinito = {"indice_militare": 0, "indice_civile": 0, "prossima_categoria": "militare"}
     if not os.path.exists(ROTATION_STATE_FILE):
-        return 0
+        return predefinito
     with open(ROTATION_STATE_FILE, "r", encoding="utf-8") as f:
-        return json.load(f).get("prossimo_indice", 0)
+        salvato = json.load(f)
+    predefinito.update(salvato)  # tollerante a formati vecchi/parziali del file
+    return predefinito
 
 
-def salva_indice_rotazione(indice: int) -> None:
+def salva_stato_rotazione(stato: dict) -> None:
     with open(ROTATION_STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump({"prossimo_indice": indice}, f)
+        json.dump(stato, f)
 
 
 def eta_in_ore(voce_feed) -> float | None:
@@ -165,10 +169,18 @@ def raccogli_notizie_candidate(feeds_da_leggere):
 def main():
     id_pubblicati = carica_id_pubblicati()
 
-    # ruotiamo l'ordine delle fonti: ad ogni run si parte da una diversa,
-    # cosi' su piu' esecuzioni tutte le fonti hanno il turno di "prima scelta"
-    indice_partenza = carica_indice_rotazione() % len(FEEDS)
-    feeds_ruotati = FEEDS[indice_partenza:] + FEEDS[:indice_partenza]
+    # alterniamo civile/militare ad ogni run; le fonti "misto" contano per
+    # entrambi i pool, cosi' non restano mai escluse
+    stato = carica_stato_rotazione()
+    categoria_target = stato["prossima_categoria"]
+    pool = [f for f in FEEDS if f["categoria"] in (categoria_target, "misto")]
+    if not pool:  # rete di sicurezza, non dovrebbe succedere
+        pool = FEEDS
+
+    chiave_indice = f"indice_{categoria_target}"
+    indice_partenza = stato[chiave_indice] % len(pool)
+    feeds_ruotati = pool[indice_partenza:] + pool[:indice_partenza]
+    print(f"Categoria di turno: {categoria_target} ({len(pool)} fonti nel pool)")
     print(f"Ordine fonti in questo run (partenza da indice {indice_partenza}): "
           f"{[f['url'] for f in feeds_ruotati]}")
 
@@ -220,7 +232,9 @@ def main():
             print(f"[pubblicata] {titolo_it}")
 
     salva_id_pubblicati(id_pubblicati)
-    salva_indice_rotazione((indice_partenza + 1) % len(FEEDS))
+    stato[chiave_indice] = (indice_partenza + 1) % len(pool)
+    stato["prossima_categoria"] = "civile" if categoria_target == "militare" else "militare"
+    salva_stato_rotazione(stato)
     print(f"Fatto. Notizie pubblicate in questo run: {pubblicate_in_questo_run}")
 
 
