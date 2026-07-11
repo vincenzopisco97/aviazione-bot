@@ -81,5 +81,7 @@ EUROPE_KEYWORDS = EUROPE_COUNTRIES + EUROPE_INSTITUTIONS + EUROPE_COMPANIES
 # ALTRE IMPOSTAZIONI
 # ---------------------------------------------------------------------------
 
-MAX_POST_PER_RUN = 6          # tetto di sicurezza per non floodare il canale
+MAX_POST_PER_RUN = 1          # 1 a run, gira ogni ora -> fino a 24 notizie/giorno, mai a raffica
+MAX_PER_SOURCE_PER_RUN = 2    # tetto per singola fonte (di fatto ininfluente ora che il run tiene 1 sola notizia, lo lascio per sicurezza se in futuro alzi MAX_POST_PER_RUN)
+NEWS_MAX_AGE_HOURS = 24       # scarta notizie piu' vecchie di cosi' (24 = "di oggi")
 POSTED_IDS_FILE = "posted_ids.json"
