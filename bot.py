@@ -36,13 +36,40 @@ from feeds_config import (
     ROTATION_STATE_FILE,
 )
 from telegram_publisher import pubblica
-from traduttore import traduci
+from traduttore import traduci_notizia
 
 
 def pulisci_html(testo: str) -> str:
     """Rimuove tag HTML residui che spesso compaiono nei riassunti RSS."""
     testo = regex_sub(r"<[^>]+>", "", testo or "")
     return unescape(testo).strip()
+
+
+def accorcia_al_periodo(testo: str, lunghezza_max: int = 320) -> str:
+    """Accorcia il testo fermandosi all'ultimo punto/!/? entro lunghezza_max,
+    cosi' il riassunto finisce sempre con una frase completa invece che a
+    meta' parola. Se non trova punteggiatura utile (frase molto lunga senza
+    pause), accorcia comunque al bordo parola piu' vicino e aggiunge "..."
+    """
+    if not testo or len(testo) <= lunghezza_max:
+        return testo
+
+    finestra = testo[:lunghezza_max]
+    migliore_taglio = -1
+    for segno in (".", "!", "?"):
+        pos = finestra.rfind(segno)
+        # scartiamo tagli troppo corti (es. un punto dopo "Dott." a carattere 4)
+        if pos > lunghezza_max * 0.4:
+            migliore_taglio = max(migliore_taglio, pos)
+
+    if migliore_taglio > -1:
+        return finestra[: migliore_taglio + 1].strip()
+
+    # nessun punto utile trovato: tronchiamo al bordo parola piu' vicino
+    taglio_parola = finestra.rfind(" ")
+    if taglio_parola > -1:
+        finestra = finestra[:taglio_parola]
+    return finestra.strip() + "…"
 
 
 def id_notizia(link: str) -> str:
@@ -112,7 +139,7 @@ def raccogli_notizie_candidate(feeds_da_leggere):
                     "titolo": pulisci_html(voce.get("title", "")),
                     "riassunto": pulisci_html(
                         voce.get("summary", voce.get("description", ""))
-                    )[:500],  # teniamo i riassunti brevi, siamo su Telegram
+                    )[:900],  # generoso: il taglio pulito vero avviene DOPO la traduzione
                     "link": voce.get("link", ""),
                     "lang": feed_cfg["lang"],
                     "fonte": parsed.feed.get("title", feed_cfg["url"]),
@@ -174,8 +201,10 @@ def main():
         if not e_rilevante_europa(notizia["titolo"], notizia["riassunto"]):
             continue
 
-        titolo_it = traduci(notizia["titolo"], notizia["lang"])
-        riassunto_it = traduci(notizia["riassunto"], notizia["lang"])
+        titolo_it, riassunto_it = traduci_notizia(
+            notizia["titolo"], notizia["riassunto"], notizia["lang"]
+        )
+        riassunto_it = accorcia_al_periodo(riassunto_it)
 
         successo = pubblica(
             titolo=titolo_it,
