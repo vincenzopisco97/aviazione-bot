@@ -2,8 +2,8 @@ name: Pubblica notizie aviazione
 
 on:
   schedule:
-    # Ogni ora, in punto (orario UTC). L'Italia e' UTC+1 in inverno, UTC+2 in estate.
-    - cron: "0 * * * *"
+    # Ogni 30 minuti (orario UTC). L'Italia e' UTC+1 in inverno, UTC+2 in estate.
+    - cron: "*/30 * * * *"
   workflow_dispatch: {}   # permette anche l'avvio manuale da GitHub
 
 # Serve il permesso di scrittura per poter ricommittare posted_ids.json
